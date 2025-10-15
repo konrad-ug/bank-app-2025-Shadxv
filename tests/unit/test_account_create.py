@@ -26,7 +26,7 @@ class TestAccount:
     def test_promo_code(self):
         account1 = Account("John", "Doe", None, None)
         assert account1.balance == 0
-        account2 = Account("John", "Doe", None, "PROM_ABC")
+        account2 = Account("John", "Doe", "12345678901", "PROM_ABC")
         assert account2.balance == 50
         account3 = Account("John", "Doe", None, "PROM-ABC")
         assert account3.balance == 0
@@ -36,3 +36,9 @@ class TestAccount:
         assert account5.balance == 0
         account6 = Account("John", "Doe", None, "PRO-ABC")
         assert account6.balance == 0
+
+    def test_birth_year(self):
+        account1 = Account("John", "Doe", None, "PROM_ABC")
+        assert account1.balance == 0
+        account2 = Account("John", "Doe", "12345678901", "PROM_ABC")
+        assert account2.balance == 50
