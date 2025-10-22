@@ -10,6 +10,14 @@ class Account:
         if isinstance(promo_code, str) and promo_code.startswith("PROM_") and len(promo_code) == 8 and self.is_born_after_1960(self.pesel):
             self.balance += 50
 
+    def transfer_in(self, amount):
+        if amount > 0:
+            self.balance += amount
+
+    def transfer_out(self, amount):
+        if amount > 0 and self.balance >= amount:
+            self.balance -= amount
+
     def is_born_after_1960(self, pesel):
         birth_year_str = pesel[0:2]
         try:
