@@ -1,8 +1,33 @@
-class Account:
+from abc import ABC, abstractmethod
+
+class Account(ABC):
+    def __init__(self):
+        self.balance = 0
+
+    def transfer_in(self, amount):
+        if amount > 0:
+            self.balance += amount
+
+    def transfer_out(self, amount):
+        if amount > 0 and self.balance >= amount:
+            self.balance -= amount
+
+    def express_transfer(self, amount):
+        if amount <= 0:
+            return
+        if amount > self.balance:
+            return
+        self.balance -= amount + self._get_express_transfer_cost()
+
+    @abstractmethod
+    def _get_express_transfer_cost(self):
+        pass
+
+class PersonalAccount(Account):
     def __init__(self, first_name, last_name, pesel, promo_code=None):
+        super().__init__()
         self.first_name = first_name
         self.last_name = last_name
-        self.balance = 0
         if isinstance(pesel, str) and len(pesel) == 11 and pesel.isdigit():
             self.pesel = pesel
         else:
@@ -17,3 +42,18 @@ class Account:
             return birth_year > 60 or (birth_year < 25)
         except:
             return False
+
+    def _get_express_transfer_cost(self):
+        return 1
+
+class FirmAccount(Account):
+    def __init__(self, company_name, nip):
+        super().__init__()
+        self.company_name = company_name
+        if nip and len(nip) == 10 and nip.isdigit():
+            self.nip = nip
+        else:
+            self.nip = "Invalid"
+
+    def _get_express_transfer_cost(self):
+        return 5
