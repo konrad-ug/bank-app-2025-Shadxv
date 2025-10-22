@@ -1,4 +1,6 @@
-class Account:
+from abc import ABC, abstractmethod
+
+class Account(ABC):
     def __init__(self):
         self.balance = 0
 
@@ -9,6 +11,17 @@ class Account:
     def transfer_out(self, amount):
         if amount > 0 and self.balance >= amount:
             self.balance -= amount
+
+    def express_transfer(self, amount):
+        if amount <= 0:
+            return
+        if amount > self.balance:
+            return
+        self.balance -= amount + self._get_express_transfer_cost()
+
+    @abstractmethod
+    def _get_express_transfer_cost(self):
+        pass
 
 class PersonalAccount(Account):
     def __init__(self, first_name, last_name, pesel, promo_code=None):
@@ -30,6 +43,9 @@ class PersonalAccount(Account):
         except:
             return False
 
+    def _get_express_transfer_cost(self):
+        return 1
+
 class FirmAccount(Account):
     def __init__(self, company_name, nip):
         super().__init__()
@@ -38,3 +54,6 @@ class FirmAccount(Account):
             self.nip = nip
         else:
             self.nip = "Invalid"
+
+    def _get_express_transfer_cost(self):
+        return 5

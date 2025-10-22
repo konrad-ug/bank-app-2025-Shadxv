@@ -39,3 +39,31 @@ class TestOperations:
         assert account4.nip == "Invalid"
         account5 = FirmAccount("Apple Inc.", "abcdefghij")
         assert account5.nip == "Invalid"
+
+    def test_express_transfer_personal_account(self):
+        account = PersonalAccount("John", "Doe", None)
+        account.transfer_in(100)
+        account.express_transfer(50)
+        assert account.balance == 49
+        account.express_transfer(0)
+        assert account.balance == 49
+        account.express_transfer(-50)
+        assert account.balance == 49
+        account.express_transfer(100)
+        assert account.balance == 49
+        account.express_transfer(49)
+        assert account.balance == -1
+
+    def test_express_transfer_personal_account(self):
+        account = FirmAccount("Apple Inc.", None)
+        account.transfer_in(100)
+        account.express_transfer(50)
+        assert account.balance == 45
+        account.express_transfer(0)
+        assert account.balance == 45
+        account.express_transfer(-50)
+        assert account.balance == 45
+        account.express_transfer(100)
+        assert account.balance == 45
+        account.express_transfer(45)
+        assert account.balance == -5
