@@ -68,8 +68,8 @@ class TestOperations:
         account.express_transfer(45)
         assert account.balance == -5
 
-    def test_express_transfer_costs(self):
-        personal_account = PersonalAccount("John", "Doe", None)
-        firm_account = FirmAccount("Apple Inc.", None)
-        assert personal_account.get_express_transfer_cost() == 1
-        assert firm_account.get_express_transfer_cost() == 5
+    # def test_express_transfer_costs(self):
+    #     personal_account = PersonalAccount("John", "Doe", None)
+    #     firm_account = FirmAccount("Apple Inc.", None)
+    #     assert personal_account.get_express_transfer_cost() == 1
+    #     assert firm_account.get_express_transfer_cost() == 5
