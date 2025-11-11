@@ -1,4 +1,4 @@
-from src.account import PersonalAccount
+from src.account import PersonalAccount, is_born_after_1960
 
 
 class TestAccount:
@@ -39,6 +39,8 @@ class TestAccount:
 
     def test_birth_year(self):
         account1 = PersonalAccount("John", "Doe", None, "PROM_ABC")
+        assert is_born_after_1960(account1.pesel) is False
         assert account1.balance == 0
         account2 = PersonalAccount("John", "Doe", "12345678901", "PROM_ABC")
+        assert is_born_after_1960(account2.pesel) is True
         assert account2.balance == 50
