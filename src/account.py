@@ -17,11 +17,11 @@ class Account(ABC):
             return
         if amount > self.balance:
             return
-        self.balance -= amount + self._get_express_transfer_cost()
+        self.balance -= amount + self.get_express_transfer_cost()
 
     @abstractmethod
-    def _get_express_transfer_cost(self):
-        pass
+    def get_express_transfer_cost(self):
+        """Abstract get express transfer costs. Implemented in subclasses"""
 
 class PersonalAccount(Account):
     def __init__(self, first_name, last_name, pesel, promo_code=None):
@@ -32,19 +32,19 @@ class PersonalAccount(Account):
             self.pesel = pesel
         else:
             self.pesel = "Invalid"
-        if isinstance(promo_code, str) and promo_code.startswith("PROM_") and len(promo_code) == 8 and self.is_born_after_1960(self.pesel):
+        if isinstance(promo_code, str) and promo_code.startswith("PROM_") and len(promo_code) == 8 and is_born_after_1960(self.pesel):
             self.balance += 50
 
-    def is_born_after_1960(self, pesel):
-        birth_year_str = pesel[0:2]
-        try:
-            birth_year = int(birth_year_str)
-            return birth_year > 60 or (birth_year < 25)
-        except:
-            return False
-
-    def _get_express_transfer_cost(self):
+    def get_express_transfer_cost(self):
         return 1
+
+def is_born_after_1960(pesel):
+    birth_year_str = pesel[0:2]
+    try:
+        birth_year = int(birth_year_str)
+        return birth_year > 60 or (birth_year < 25)
+    except:
+        return False
 
 class FirmAccount(Account):
     def __init__(self, company_name, nip):
@@ -55,5 +55,5 @@ class FirmAccount(Account):
         else:
             self.nip = "Invalid"
 
-    def _get_express_transfer_cost(self):
+    def get_express_transfer_cost(self):
         return 5
