@@ -3,14 +3,17 @@ from abc import ABC, abstractmethod
 class Account(ABC):
     def __init__(self):
         self.balance = 0
+        self.history = []
 
     def transfer_in(self, amount):
         if amount > 0:
             self.balance += amount
+            self.history.append(amount)
 
     def transfer_out(self, amount):
         if amount > 0 and self.balance >= amount:
             self.balance -= amount
+            self.history.append(-amount)
 
     def express_transfer(self, amount):
         if amount <= 0:
@@ -18,6 +21,8 @@ class Account(ABC):
         if amount > self.balance:
             return
         self.balance -= amount + self.get_express_transfer_cost()
+        self.history.append(-amount)
+        self.history.append(-self.get_express_transfer_cost())
 
     @abstractmethod
     def get_express_transfer_cost(self):
