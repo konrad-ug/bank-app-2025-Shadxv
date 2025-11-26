@@ -43,6 +43,20 @@ class PersonalAccount(Account):
     def get_express_transfer_cost(self):
         return 1
 
+    def submit_for_loan(self, amount):
+        if amount <= 0:
+            return False
+        if self.are_last_three_income() or (len(self.history) >= 5 and sum(self.history[-5:]) > amount):
+            self.balance += amount
+            return True
+        return False
+
+    def are_last_three_income(self):
+        if len(self.history) < 3:
+            return False
+        return all(x > 0 for x in self.history[-3:])
+
+
 def is_born_after_1960(pesel):
     birth_year_str = pesel[0:2]
     try:
