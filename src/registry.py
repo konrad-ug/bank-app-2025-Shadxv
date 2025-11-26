@@ -14,3 +14,6 @@ class AccountRegistry:
 
     def count(self):
         return len(self.accounts)
+
+    def delete(self, pesel):
+        self.accounts = [acc for acc in self.accounts if acc.pesel != pesel]
