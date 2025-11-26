@@ -76,3 +76,13 @@ class FirmAccount(Account):
 
     def get_express_transfer_cost(self):
         return 5
+
+    def take_loan(self, amount):
+        if amount <= 0:
+            return False
+        if self.balance < 2*amount:
+            return False
+        if self.history.count(-1775) == 0:
+            return False
+        self.balance += amount
+        return True
