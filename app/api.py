@@ -9,6 +9,9 @@ registry = AccountRegistry()
 def create_account():
     data = request.get_json()
     print(f"Create account request: {data}")
+    searchResault = registry.find_account(data["pesel"])
+    if searchResault is not None:
+        return jsonify({"message": "Account with this PESEL already exists"}), 409
     account = PersonalAccount(data["name"], data["surname"], data["pesel"])
     registry.add_account(account)
     return jsonify({"message": "Account created"}), 201
@@ -54,3 +57,32 @@ def update_account(pesel):
 def delete_account(pesel):
     registry.delete(pesel)
     return jsonify({"message": "Account deleted"}), 200
+
+@app.route("/api/accounts/<pesel>/transfer", methods=['POST'])
+def transfer(pesel):
+    acc = registry.find_account(pesel)
+    if acc is None:
+        return jsonify({"error": "Account not found"}), 404
+
+    data = request.get_json()
+    transfer_type = data.get("type", "invalid")
+
+    match transfer_type.lower():
+        case 'incomming':
+            amount = data.get("amount", 0)
+            if not acc.transfer_in(amount):
+                return jsonify({"error": "Invalid transfer amount"}), 400
+            return jsonify({"message": "Transfer successful", "new_balance": acc.balance}), 200
+        case 'outgoing':
+            amount = data.get("amount", 0)
+            if not acc.transfer_out(amount):
+                return jsonify({"error": "Invalid transfer amount"}), 400
+            return jsonify({"message": "Transfer successful", "new_balance": acc.balance}), 200
+        case 'express':
+            amount = data.get("amount", 0)
+
+            if not acc.express_transfer(amount):
+                return jsonify({"error": "Invalid transfer amount"}), 400
+            return jsonify({"message": "Express transfer successful", "new_balance": acc.balance}), 200
+
+    return jsonify({"error": "Invalid transfer type"}), 400

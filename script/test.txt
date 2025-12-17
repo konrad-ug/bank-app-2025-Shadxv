@@ -1,0 +1,142 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.7, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/shadxw/Documents/Studies/TestowanieAutomatyczne/bank-app-2025-Shadxv
+collected 12 items
+
+tests/api/test_crud.py FFF.F.                                            [ 50%]
+tests/api/test_operations.py FF.FFF                                      [100%]
+
+=================================== FAILURES ===================================
+_________________________ TestCRUD.test_create_account _________________________
+
+self = <test_crud.TestCRUD object at 0x1070b2850>
+
+    def test_create_account(self):
+        r = requests.get(self.URL + "/count")
+        assert r.status_code == 200
+>       assert r.json()["count"] == 1
+E       assert 0 == 1
+
+tests/api/test_crud.py:26: AssertionError
+_________________________ TestCRUD.test_accounts_limit _________________________
+
+self = <test_crud.TestCRUD object at 0x1070b2c10>
+
+    def test_accounts_limit(self):
+>       r1 = requests.post(self.URL, data=account_data)
+                                          ^^^^^^^^^^^^
+E       NameError: name 'account_data' is not defined
+
+tests/api/test_crud.py:29: NameError
+__________________________ TestCRUD.test_find_account __________________________
+
+self = <test_crud.TestCRUD object at 0x107174fc0>
+
+    def test_find_account(self):
+>       r = requests.get(self.URL + "/" + account_data[pesel])
+                                          ^^^^^^^^^^^^
+E       NameError: name 'account_data' is not defined
+
+tests/api/test_crud.py:35: NameError
+_________________________ TestCRUD.test_update_account _________________________
+
+self = <test_crud.TestCRUD object at 0x10716e7b0>
+
+    def test_update_account(self):
+        update_data = {
+            "name": "Bob",
+            "surname": "Johnson",
+            "pesel": "65012345679"
+        }
+        r = requests.patch(self.URL + "/65012345678", data=update_data)
+>       assert r.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404]>.status_code
+
+tests/api/test_crud.py:52: AssertionError
+_____________________ TestOperations.test_transfer_in_out ______________________
+
+self = <test_operations.TestOperations object at 0x1070b2d50>
+
+    def test_transfer_in_out(self):
+        transfer_data = {
+            "amount": 500,
+            "type": "in"
+        }
+        r = requests.post(f"{self.URL}/65012345678/transfer", data=transfer_data)
+>       assert r.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404]>.status_code
+
+tests/api/test_operations.py:29: AssertionError
+_____________________ TestOperations.test_express_transfer _____________________
+
+self = <test_operations.TestOperations object at 0x1070b2ad0>
+
+    def test_express_transfer(self):
+        transfer_data = {
+            "amount": 100,
+            "type": "in"
+        }
+        r = requests.post(f"{self.URL}/65012345678/transfer", data=transfer_data)
+>       assert r.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404]>.status_code
+
+tests/api/test_operations.py:52: AssertionError
+_________________ TestOperations.test_invalid_amount_transfer __________________
+
+self = <test_operations.TestOperations object at 0x1071750f0>
+
+    def test_invalid_amount_transfer(self):
+        transfer_data = {
+            "amount": -100,
+            "type": "in"
+        }
+        r = requests.post(f"{self.URL}/65012345678/transfer", data=transfer_data)
+>       assert r.status_code == 400
+E       assert 404 == 400
+E        +  where 404 = <Response [404]>.status_code
+
+tests/api/test_operations.py:79: AssertionError
+__________________ TestOperations.test_invalid_type_transfer ___________________
+
+self = <test_operations.TestOperations object at 0x10716f9b0>
+
+    def test_invalid_type_transfer(self):
+        transfer_data = {
+            "amount": 100,
+            "type": "invalid_type"
+        }
+        r = requests.post(f"{self.URL}/65012345678/transfer", data=transfer_data)
+>       assert r.status_code == 400
+E       assert 404 == 400
+E        +  where 404 = <Response [404]>.status_code
+
+tests/api/test_operations.py:107: AssertionError
+_________________ TestOperations.test_transfer_without_balance _________________
+
+self = <test_operations.TestOperations object at 0x10716a140>
+
+    def test_transfer_without_balance(self):
+        transfer_data = {
+            "amount": 50,
+            "type": "express"
+        }
+        r = requests.post(f"{self.URL}/65012345678/transfer", data=transfer_data)
+>       assert r.status_code == 400
+E       assert 404 == 400
+E        +  where 404 = <Response [404]>.status_code
+
+tests/api/test_operations.py:121: AssertionError
+=========================== short test summary info ============================
+FAILED tests/api/test_crud.py::TestCRUD::test_create_account - assert 0 == 1
+FAILED tests/api/test_crud.py::TestCRUD::test_accounts_limit - NameError: nam...
+FAILED tests/api/test_crud.py::TestCRUD::test_find_account - NameError: name ...
+FAILED tests/api/test_crud.py::TestCRUD::test_update_account - assert 404 == 200
+FAILED tests/api/test_operations.py::TestOperations::test_transfer_in_out - a...
+FAILED tests/api/test_operations.py::TestOperations::test_express_transfer - ...
+FAILED tests/api/test_operations.py::TestOperations::test_invalid_amount_transfer
+FAILED tests/api/test_operations.py::TestOperations::test_invalid_type_transfer
+FAILED tests/api/test_operations.py::TestOperations::test_transfer_without_balance
+========================= 9 failed, 3 passed in 0.11s ==========================

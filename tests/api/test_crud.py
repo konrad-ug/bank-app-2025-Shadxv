@@ -4,7 +4,7 @@ import requests
 
 class TestCRUD:
 
-    URL = "127.0.0.1:5000/api/accounts"
+    URL = "http://127.0.0.1:5000/api/accounts"
 
     @pytest.fixture
     def set_up(self):
@@ -13,36 +13,47 @@ class TestCRUD:
             "surname": "Smith",
             "pesel": "65012345678"
         }
-        r = requests.post(self.URL, data=account_data)
+        r = requests.post(self.URL, json=account_data)
         assert r.status_code == 201
         yield
         response = requests.get(self.URL)
         for acc in response.json():
             requests.delete(f"{self.URL}/{acc['pesel']}")
 
-    def test_create_account(self):
-        r = requests.post(self.URL + "/count")
+    def test_create_account(self, set_up):
+        r = requests.get(self.URL + "/count")
         assert r.status_code == 200
         assert r.json()["count"] == 1
 
-    def test_find_account(self):
-        r = requests.get(self.URL + "/" + account_data[pesel])
+    def test_accounts_limit(self, set_up):
+        account_data = {
+            "name": "Bob",
+            "surname": "Johnson",
+            "pesel": "65012345679"
+        }
+        r1 = requests.post(self.URL, json=account_data)
+        assert r1.status_code == 201
+        r2 = requests.post(self.URL, json=account_data)
+        assert r2.status_code == 409
+
+    def test_find_account(self, set_up):
+        r = requests.get(self.URL + "/65012345678")
         assert r.status_code == 200
         assert r.json()["name"] == "Alice"
         assert r.json()["surname"] == "Smith"
         assert r.json()["pesel"] == "65012345678"
 
-    def test_find_account_404(self):
+    def test_find_account_404(self, set_up):
         r = requests.get(self.URL + "/00000000000")
         assert r.status_code == 404
 
-    def test_update_account(self):
+    def test_update_account(self, set_up):
         update_data = {
             "name": "Bob",
             "surname": "Johnson",
             "pesel": "65012345679"
         }
-        r = requests.patch(self.URL + "/65012345678", data=update_data)
+        r = requests.patch(self.URL + "/65012345678", json=update_data)
         assert r.status_code == 200
 
         r = requests.get(self.URL + "/65012345679")
@@ -51,7 +62,7 @@ class TestCRUD:
         assert r.json()["surname"] == "Johnson"
         assert r.json()["pesel"] == "65012345679"
 
-    def test_delete_account(self):
+    def test_delete_account(self, set_up):
         r = requests.delete(self.URL + "/65012345678")
         assert r.status_code == 200
 

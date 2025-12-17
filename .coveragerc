@@ -1,0 +1,12 @@
+[run]
+# Tutaj możesz wskazać ścieżki do śledzenia
+source = .
+
+[report]
+exclude_lines =
+    # Pomija definicję klasy i wszystko co w niej jest
+    class FirmAccount\(Account\):
+    # Możesz też dodać standardowe pominięcia
+    pragma: no cover
+    def __repr__
+    if __name__ == .__main__.:
