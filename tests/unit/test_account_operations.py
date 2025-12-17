@@ -26,11 +26,17 @@ class TestOperations:
         account.transfer_out(100)
         assert account.balance == 800
 
-    def test_firm_account(self):
+    def test_firm_account(self, mocker):
+        mock_get = mocker.patch('src.account.requests.get')
+        mock_get.return_value.json.return_value = {
+            "result": {"subject": {"statusVat": "Czynny"}}
+        }
+
         account = FirmAccount("Apple Inc.", "1234567890")
         assert account.company_name == "Apple Inc."
         assert account.nip == "1234567890"
         assert account.balance == 0
+
         account2 = FirmAccount("Apple Inc.", "123")
         assert account2.nip == "Invalid"
         account3 = FirmAccount("Apple Inc.", "123456789098")

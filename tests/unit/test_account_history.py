@@ -10,7 +10,12 @@ class TestHistory:
         expected_history = [200, -50, -30, -1]
         assert account.history == expected_history
 
-    def test_firm_account_history(self):
+    def test_firm_account_history(self, mocker):
+        mock_get = mocker.patch('src.account.requests.get')
+        mock_get.return_value.json.return_value = {
+            "result": {"subject": {"statusVat": "Czynny"}}
+        }
+
         account = FirmAccount("Apple Inc.", "1234567890")
         account.transfer_in(500)
         account.transfer_out(200)
