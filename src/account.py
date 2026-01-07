@@ -1,6 +1,7 @@
 import os
 import requests
 from datetime import date
+from lib.smtp import SMTPClient
 from abc import ABC, abstractmethod
 class Account(ABC):
     def __init__(self):
@@ -30,6 +31,16 @@ class Account(ABC):
         self.history.append(-amount)
         self.history.append(-self.get_express_transfer_cost())
         return True
+
+    def send_history_via_email(self, email):
+        subject = "Account Transfer History " + date.today().strftime("%Y-%m-%d")
+        text = f"{self._get_account_type_name()} account history: {self.history}"
+        print(subject, text, sep='\n')
+        return SMTPClient.send(subject, text, email)
+
+    @abstractmethod
+    def _get_account_type_name(self): # pragma: no cover
+        """Abstract get account type name. Implemented in subclasses"""
 
     @abstractmethod
     def get_express_transfer_cost(self):
@@ -63,6 +74,9 @@ class PersonalAccount(Account):
             return False
         return all(x > 0 for x in self.history[-3:])
 
+    def _get_account_type_name(self): # pragma: no cover
+        return "Personal"
+
 
 def is_born_after_1960(pesel):
     birth_year_str = pesel[0:2]
@@ -72,7 +86,6 @@ def is_born_after_1960(pesel):
     except:
         return False
 
-# pragma: no cover
 class FirmAccount(Account):
     def __init__(self, company_name, nip):
         super().__init__()
@@ -116,3 +129,6 @@ class FirmAccount(Account):
             return False
         self.balance += amount
         return True
+
+    def _get_account_type_name(self): # pragma: no cover
+        return "Company"
