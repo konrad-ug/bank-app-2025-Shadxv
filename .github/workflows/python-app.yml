@@ -39,3 +39,15 @@ jobs:
             - name: Coverage
               run: |
                   python3 -m coverage report --fail-under=100
+            - name: Start flask
+              run: |
+                  export FLASK_APP=app/api.py
+                  export FLASK_ENV=development
+                  export PYTHONPATH=$GITHUB_WORKSPACE
+                  flask run &
+            - name: Execute API tests
+              run: |
+                  python3 -m pytest tests/api
+            - name: Execute performance tests
+              run: |
+                  python3 -m pytest tests/perf
