@@ -17,3 +17,6 @@ class AccountRegistry:
 
     def delete(self, pesel):
         self.accounts = [acc for acc in self.accounts if acc.pesel != pesel]
+
+    def clear(self):
+        self.accounts = []
