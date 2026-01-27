@@ -3,6 +3,7 @@ import requests
 from datetime import date
 from lib.smtp import SMTPClient
 from abc import ABC, abstractmethod
+
 class Account(ABC):
     def __init__(self):
         self.balance = 0
@@ -45,6 +46,10 @@ class Account(ABC):
     @abstractmethod
     def get_express_transfer_cost(self):
         """Abstract get express transfer costs. Implemented in subclasses"""
+    
+    @abstractmethod
+    def to_dict(self):
+        """Abstract to_dict. Implemented in subclasses"""
 
 class PersonalAccount(Account):
     def __init__(self, first_name, last_name, pesel, promo_code=None):
@@ -76,6 +81,16 @@ class PersonalAccount(Account):
 
     def _get_account_type_name(self): # pragma: no cover
         return "Personal"
+    
+    def to_dict(self):
+        return {
+            "type": "PersonalAccount",
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "pesel": self.pesel,
+            "balance": self.balance,
+            "history": self.history
+        }
 
 
 def is_born_after_1960(pesel):
@@ -132,3 +147,12 @@ class FirmAccount(Account):
 
     def _get_account_type_name(self): # pragma: no cover
         return "Company"
+
+    def to_dict(self):
+        return {
+            "type": "FirmAccount",
+            "company_name": self.company_name,
+            "nip": self.nip,
+            "balance": self.balance,
+            "history": self.history
+        }
