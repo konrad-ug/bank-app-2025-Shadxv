@@ -1,17 +1,17 @@
 import pytest
 from src.mongo_accounts_repository import MongoAccountsRepository
 from src.account import PersonalAccount
-from unittest.mock import Mock
 
 def test_mongo_repository_unit(mocker):
-    mock_collection = Mock()
-    mock_db = Mock()
-    mock_client = Mock()
+    mock_client = mocker.MagicMock()
+    mock_db = mocker.MagicMock()
+    
+    mock_collection = mocker.Mock()
 
     mock_client.__getitem__.return_value = mock_db
     mock_db.__getitem__.return_value = mock_collection
 
-    mocker.patch('pymongo.MongoClient', return_value=mock_client)
+    mocker.patch('src.mongo_accounts_repository.MongoClient', return_value=mock_client)
     
     repo = MongoAccountsRepository()
     
@@ -23,6 +23,7 @@ def test_mongo_repository_unit(mocker):
     mock_collection.insert_one.assert_called_once()
     
     mock_collection.find.return_value = [account.to_dict()]
+
     loaded_accounts = repo.load_all()
     
     assert len(loaded_accounts) == 1
