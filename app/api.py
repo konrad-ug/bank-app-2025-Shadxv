@@ -107,3 +107,8 @@ def load_accounts():
         return jsonify({"message": "Accounts loaded"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@app.route("/api/accounts/clear", methods=['POST'])
+def clear_accounts():
+    registry.clear()
+    return jsonify({"message": "Account registry cleared"}), 200

@@ -8,6 +8,8 @@ class TestCRUD:
 
     @pytest.fixture
     def set_up(self):
+        requests.post(self.URL + "/clear")
+        
         account_data = {
             "name": "Alice",
             "surname": "Smith",
@@ -16,9 +18,7 @@ class TestCRUD:
         r = requests.post(self.URL, json=account_data)
         assert r.status_code == 201
         yield
-        response = requests.get(self.URL)
-        for acc in response.json():
-            requests.delete(f"{self.URL}/{acc['pesel']}")
+        requests.post(self.URL + "/clear")
 
     def test_create_account(self, set_up):
         r = requests.get(self.URL + "/count")
